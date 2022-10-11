@@ -1,0 +1,56 @@
+#RECOMENDACIONES Y ACLARACIONES
+#ESTE ES UN EJEMPLO DE UN PERCEPTRON, DE UNA MANERA SENCILLA EN PYTHON
+#TENER YA EN CUENTA QUE DEBES TENER UN DATASET YA SEPARABLE, EN ESTA VERSION LAS ETIQUETAS PUEDEN SER 0 Y 1
+#PUEDE LEER .DATA .TXT .CSV (MAS RECOMENDABLE ESTAS  DOS ULTIMAS)
+#PUEDES DIVERTIRT JUGANDO CON EL CODIGO, BUENAS NOCHES O BUEN DIA ATT: COOKIES:D
+
+#IMPORTAMOS O LEEMOS EL DATASET
+from numpy import genfromtxt
+import matplotlib.pyplot as plt
+import numpy as np
+nombre_dataset = 'un dataset cualquera' #OJO DEBE ESTAR EN LA MISMA CARPETA DONDE TIENES TU CODIGO, PUEDES LEERLO CON PANDAS, YA SEA CSV,DATA O TXT FUNCIONA CON ESTAS
+data = genfromtxt(nombre_dataset, delimiter=',', skip_header=0)
+
+#SELECCIONAMOS LOS PARAMETROS QUE OCUPAREMOS
+x1 = np.array(data[:, 0])  #ESTO QUIERE DECIR QUE ESCOGEREMOS TODAS LAS MUESTRAS DE LA COLUMNA 0         
+x2 = np.array(data[:, 1])  #ESTO QUIERE DECIR QUE ESCOGEREMOS TODAS LAS MUESTRAS DE LA COLUMNA 1
+x3 = np.array(np.ones(x1.size)) #CREAMOS NUESTRA TERCERA COLUMNA DE 1
+etiquetas = np.array(data[:,4]) #SELECCIONAMOS TODAS LAS MUESTRAS EN LA COLUMNA DONDE SE UBIQUEN NUESTRAS ETIQUETAS
+Xf = np.stack([x1,x2,x3], axis = 1) #PONEMOS NUESTAS X1,X2 Y X3 EN UNA SOLA
+Wx = [np.random.uniform(1,-1) for x in range(3)] #CREAMOS NUESTROS RAMDONS NECESAIOR W
+
+######PODRIAMOS CONSIDERAR ESTA COMO FUNCION DE ACTIVACION########
+######RECBE EL PRODUCTO PUNTO Y RETORNA SI CUMPLE LA CONDICION###
+def salida(x, w):
+       if np.dot(x, w)>=0.5: ###ESTO ES PORQUE SE CONSIDERA DE UN RANGO DE 0 A 1 SU INTERMEDIO ES 0.5, SI FUERA 1 Y -1 SU INTERMEDIO SERIA 0
+           return 1
+       else: 
+           return 0          
+           
+           
+#####ENTRENAMIENTO#####################           
+error = 0
+x = 0
+while x < etiquetas.size:
+    if(salida(Xf[x],Wx) != etiquetas[x]):    
+        error = etiquetas[x] - salida(Xf[x], Wx)  
+        Wx = Wx + (Xf[x] * error)
+        x =0
+        print("Entro?",Wx)
+    else:
+        x=x+1
+#######################################
+
+####DEFINIMOS SI LA ETIQUETA ES 1 PINTARA DE ROJO LOS PUNTOS Y AZUL EN CASO CONTRARIO, AQUI VEREMOS SI HAY SEPARACION O NO
+#PUEDES USARLO ANTES SI QUIERES SABER SI TU DATASET ES SEPARABLE
+colors = { 1: "Red", 0: "Blue"}
+typeColor = [colors[val] for val in etiquetas]
+
+
+x = np.arange(4,30, 0.1)  #ASIGNAMOS VALORES PARA PODER TRAZAR NUESTRA RECTA
+y = ((-Wx[0]*x) - Wx[2]) / Wx[1]#DESPEJAMOS W PARA TENER NUESTRA Y
+
+#GRAFICAMOS
+plt.scatter(x1, x2, color = typeColor)
+plt.plot(x, y) 
+plt.show() 
